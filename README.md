@@ -1,281 +1,249 @@
 # UK Data Analytics Job Market
 
-An end-to-end data analytics portfolio project examining UK hiring demand for data and analytics professionals using **Python, SQL, Power BI-ready outputs, public labour-market data, and an optional live jobs API**.
+**Python | SQL | Pandas | REST API | Power BI | GitHub Actions**
 
-## Project Question
+An end-to-end portfolio project analysing the UK data and analytics job market using live Adzuna vacancy data and public UK labour-market sources.
 
-> **How is the UK data and analytics job market changing, where is demand concentrated, and which skills appear in live analytics vacancies?**
+![Project overview](charts/portfolio_overview.png)
 
-## What this repository demonstrates
+## Project Objective
 
-- API / public-data ingestion
-- reproducible data pipelines
-- data cleaning and validation
-- SQL analysis
-- Python exploratory analysis
-- text-based skill extraction
-- time-series analysis
-- geographic analysis
-- dashboard design
-- data ethics and source attribution
-- automated testing with GitHub Actions
+This project asks:
 
-## Data Sources
+> **What does the current UK data analytics job market look like in terms of role demand, geography, salary fields, and technical skill mentions?**
 
-### 1. Indeed Hiring Lab — public UK job-posting index
-The public `job_postings_tracker` repository provides daily seasonally adjusted UK job-posting indices and is refreshed weekly.
+The project was designed to demonstrate an MSc-level analytics workflow rather than a single notebook exercise.
 
-Used for:
-- UK job-posting trend
-- occupational-sector trend
-- regional trend
-- city trend
+## Latest Analysis Snapshot
 
-Source:
-https://github.com/hiring-lab/job_postings_tracker
+The API extract contained **798 unique job records**. To make the headline analysis more relevant, I restricted the portfolio sample to postings from the previous 30 days classified as:
 
-Indeed Hiring Lab states that these data are available under **CC BY 4.0** and may be reused with attribution.
-
-### 2. Office for National Statistics (ONS) — UK labour demand
-ONS publishes **Labour demand volumes by Standard Occupation Classification (SOC 2020), UK**, containing online job-advert counts by local authority and occupation.
-
-Dataset page:
-https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/datasets/labourdemandvolumesbystandardoccupationclassificationsoc2020uk
-
-The edition available when this project was prepared was released **21 August 2026** and covered January 2017 to July 2026.
-
-### 3. Adzuna API — optional live analytics vacancy detail
-The optional Adzuna collector can retrieve current UK vacancies for searches such as:
 - Data Analyst
 - BI Analyst
-- Business Intelligence Analyst
 - Reporting Analyst
 - Data Scientist
 
-It enables:
-- advertised salary analysis
-- employer analysis
-- skill extraction from descriptions
-- seniority analysis
-- role-level comparisons
+This produced a **297-job core analytics sample**.
 
-API documentation:
-https://developer.adzuna.com/
+## Key Findings
 
-**API credentials are never committed to GitHub.**
+### Role Demand
 
----
+| Role | Jobs | Share | Median Salary Field |
+|---|---:|---:|---:|
+| Data Analyst | 127 | 42.8% | £53,288 |
+| Reporting Analyst | 76 | 25.6% | £51,095 |
+| BI Analyst | 71 | 23.9% | £52,500 |
+| Data Scientist | 23 | 7.7% | £60,000 |
 
-## Architecture
+**Data Analyst** was the largest role group in the 30-day core sample.
+
+![Jobs by role](charts/jobs_by_role.png)
+
+### Geography
+
+London accounted for **107 jobs (36.0%)** of the core analytics sample.
+
+Other high-volume regions are shown below.
+
+![Jobs by region](charts/jobs_by_region.png)
+
+### Salary
+
+The median cleaned Adzuna salary field across the core sample was approximately:
+
+## **£52,604**
+
+Among the four core role groups, **Data Scientist** had the highest median salary field in this sample.
+
+![Median salary by role](charts/median_salary_by_role.png)
+
+### Technology Mentions
+
+The most frequently detected technologies in the Adzuna API description snippets were:
+
+| Skill | Jobs with Mention | Share |
+|---|---:|---:|
+| Power Bi | 51 | 17.2% |
+| Sql | 27 | 9.1% |
+| Excel | 11 | 3.7% |
+| Python | 8 | 2.7% |
+| Tableau | 6 | 2.0% |
+| Machine Learning | 6 | 2.0% |
+| Statistics | 5 | 1.7% |
+| R | 4 | 1.3% |
+
+![Skill mentions](charts/skill_mentions.png)
+
+> **Important:** Adzuna's search API returns shortened description snippets. These percentages therefore represent **skill mentions detected in API snippets**, not the full percentage of employers requiring each skill.
+
+## Data Pipeline
 
 ```text
-PUBLIC DATA                         OPTIONAL LIVE DATA
-Indeed Hiring Lab                  Adzuna API
-       |                               |
-       v                               v
-download_public_data.py          collect_adzuna.py
-       |                               |
-       v                               v
-analyse_public_market.py         clean_adzuna.py
-       |                               |
-       +---------------+---------------+
-                       |
-                       v
-                  CSV outputs
-                       |
-              +--------+---------+
-              |                  |
-              v                  v
-             SQL              Power BI
-              |                  |
-              +--------+---------+
-                       |
-                       v
-              Portfolio insights
+Adzuna API
+    |
+    v
+Raw vacancy collection
+    |
+    v
+Python cleaning + deduplication
+    |
+    v
+Role / seniority classification
+    |
+    v
+Salary preparation
+    |
+    v
+Regex-based skill extraction
+    |
+    v
+SQL + Python analysis
+    |
+    v
+Power BI-ready outputs
+    |
+    v
+GitHub portfolio
 ```
 
 ## Repository Structure
 
 ```text
-uk-data-analytics-job-market/
-|
-|-- .github/workflows/
-|   `-- ci.yml
-|
-|-- dashboard/
-|   |-- POWER_BI_BUILD_GUIDE.md
-|   `-- dashboard_wireframe.png
-|
-|-- data/
-|   |-- raw/
-|   `-- processed/
-|
-|-- docs/
-|   |-- DATA_DICTIONARY.md
-|   |-- METHODOLOGY.md
-|   |-- PORTFOLIO_RESUME_COPY.md
-|   `-- PROJECT_INTERVIEW_GUIDE.md
-|
-|-- notebooks/
-|   `-- 01_market_analysis.ipynb
-|
-|-- outputs/
-|   `-- README.md
-|
-|-- sql/
-|   |-- adzuna_schema.sql
-|   `-- analysis_queries.sql
-|
-|-- src/
-|   |-- analyse_public_market.py
-|   |-- clean_adzuna.py
-|   |-- collect_adzuna.py
-|   |-- download_public_data.py
-|   `-- run_pipeline.py
-|
-|-- tests/
-|   |-- fixtures/
-|   `-- test_pipeline.py
-|
-|-- .env.example
-|-- .gitignore
-|-- CITATION.cff
-|-- LICENSE
-|-- Makefile
-|-- requirements.txt
-`-- README.md
+.
+├── charts/
+├── dashboard/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── docs/
+├── notebooks/
+├── outputs/
+├── sql/
+├── src/
+├── tests/
+└── README.md
 ```
 
-## Quick Start — public-data version (no API key required)
+## Analytical Outputs
 
-### 1. Create an environment
+The project generates reusable files including:
 
-```bash
-python -m venv .venv
-```
+- `core_analytics_jobs_30d.csv`
+- `role_summary_30d.csv`
+- `region_summary_30d.csv`
+- `skill_mentions_30d.csv`
+- `skill_by_role_30d.csv`
+- `seniority_summary_30d.csv`
+- `top_employers_30d.csv`
 
-macOS / Linux:
+## Skills Demonstrated
 
-```bash
-source .venv/bin/activate
-```
+### Python
+- REST API requests
+- Pandas
+- data cleaning
+- deduplication
+- feature engineering
+- regular expressions
+- summary analytics
+- data visualisation
 
-Windows:
+### SQL
+- aggregation
+- filtering
+- median salary analysis
+- regional analysis
+- role comparisons
+- skill co-occurrence
+- employer analysis
 
-```bash
-.venv\Scripts\activate
-```
+### BI / Reporting
+- KPI design
+- Power BI-ready tables
+- dashboard planning
+- data storytelling
 
-### 2. Install dependencies
+### Engineering / Reproducibility
+- Git/GitHub
+- GitHub Actions
+- `.gitignore`
+- environment variables
+- unit testing
+- reproducible pipelines
+- data documentation
 
-```bash
-pip install -r requirements.txt
-```
+## Methodology
 
-### 3. Download the public UK market data
+### Role filtering
 
-```bash
-python src/download_public_data.py
-```
+The full search results contained many broad roles that were returned because they matched search keywords.
 
-### 4. Run analysis
-
-```bash
-python src/analyse_public_market.py
-```
-
-or run both steps:
-
-```bash
-python src/run_pipeline.py --public
-```
-
-Generated analytical CSVs will appear in `outputs/`.
-
-## Optional: add current analytics vacancies with Adzuna
-
-Create an Adzuna developer account and copy `.env.example` to `.env`.
+For the main portfolio analysis, only these classified roles were used:
 
 ```text
-ADZUNA_APP_ID=your_app_id
-ADZUNA_APP_KEY=your_app_key
+Data Analyst
+BI Analyst
+Reporting Analyst
+Data Scientist
 ```
 
-Then:
+The analysis was also restricted to postings created within 30 days of extraction.
 
-```bash
-python src/collect_adzuna.py
-python src/clean_adzuna.py
+### Skill extraction
+
+Skill flags were created using regular expressions applied to available title and description-snippet text.
+
+Tracked skills include:
+
+```text
+SQL
+Python
+R
+Power BI
+Tableau
+Excel
+AWS
+Azure
+GCP
+Snowflake
+Databricks
+Spark
+dbt
+Power Query
+DAX
+SAS
+Alteryx
+Statistics
+Machine Learning
+Git
 ```
 
-or:
+## Limitations
 
-```bash
-python src/run_pipeline.py --adzuna
-```
+- Adzuna search results are a sample of the online job market, not every UK vacancy.
+- Search terms may return roles outside the core analytics market.
+- Description text returned by the search API is abbreviated.
+- Skill detection is based on keyword/regex matching and does not measure proficiency.
+- The current dataset did not preserve Adzuna's `salary_is_predicted` field, so salary values are described as **Adzuna salary fields** rather than automatically as employer-disclosed salaries.
+- Job postings are not identical to official vacancy statistics.
 
-## Questions Answered
+## Future Improvements
 
-### Market trend
-1. How has the UK job-posting index changed relative to the February 2020 baseline?
-2. Which UK regions are above or below the national pattern?
-3. Which cities show stronger or weaker posting activity?
-4. How does the relevant data/analytics occupational sector compare with other sectors?
+- preserve `salary_is_predicted` in future API extracts
+- automate weekly/monthly data snapshots
+- add NLP-based skill extraction
+- compare salary by skill combination
+- add a database/warehouse layer
+- add dbt transformations
+- build a live Streamlit dashboard
+- compare API vacancy trends with ONS labour-demand data
 
-### Live analytics vacancies
-5. Which analytics roles appear most often?
-6. What share of adverts disclose salary?
-7. What is the median advertised salary by role?
-8. Which skills are most frequently mentioned?
-9. How often are SQL and Python requested together?
-10. How does Power BI compare with Tableau?
-11. Which cloud/data-platform skills appear most often?
-12. Which employers appear most often in the collected sample?
+## Interview Summary
 
-## Power BI Dashboard
-
-The dashboard plan is in:
-
-`dashboard/POWER_BI_BUILD_GUIDE.md`
-
-Suggested pages:
-
-1. **UK Market Overview**
-2. **Analytics Skills**
-3. **Salary Intelligence**
-4. **Geography & Employers**
-
-A layout wireframe is included in `dashboard/dashboard_wireframe.png`.
-
-## Important Interpretation Note
-
-The Indeed Hiring Lab series is an **index**, not a raw vacancy count. A value above 100 means postings are above the 1 February 2020 baseline; below 100 means they are below that baseline.
-
-Online job adverts are also not identical to official vacancies. ONS explicitly distinguishes online job adverts from vacancies because some vacancies are advertised through channels other than online job boards.
-
-## Data Ethics
-
-- `.env` is excluded from Git.
-- Raw Adzuna descriptions are excluded from public Git commits.
-- No synthetic observations are presented as real market findings.
-- Test fixtures are explicitly marked synthetic and are used only for automated tests.
-- Source licences and limitations are documented.
-
-## How to present this project in an interview
-
-> I built a reproducible UK labour-market analytics pipeline using public job-posting data and an optional live-vacancy API. I used Python for ingestion, cleaning and analysis; SQL for business questions; and designed a Power BI dashboard covering market trends, geography, salaries and technical skill demand. I also added tests and CI so the project is reproducible rather than being a one-off notebook.
+> I built a reproducible UK job-market analytics pipeline using live vacancy data. I used Python for ingestion, cleaning, feature engineering and skill extraction, SQL for analytical questions, and prepared Power BI-ready reporting outputs. I also documented API limitations, added automated testing, and used GitHub Actions so the project behaves like a real analytics workflow rather than a one-off notebook.
 
 ## Author
 
 **Sam**  
 MSc Data Analytics
-
----
-
-### Attribution
-
-Indeed Hiring Lab job-posting index data:  
-https://github.com/hiring-lab/job_postings_tracker
-
-Office for National Statistics labour-demand data:  
-https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/datasets/labourdemandvolumesbystandardoccupationclassificationsoc2020uk
