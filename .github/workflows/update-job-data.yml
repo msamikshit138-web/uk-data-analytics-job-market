@@ -1,0 +1,45 @@
+name: Update UK Analytics Job Data
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect jobs from Adzuna
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        run: python src/collect_adzuna.py
+
+      - name: Clean and analyse job data
+        run: python src/clean_adzuna.py
+
+      - name: Commit generated analysis
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/processed/adzuna_public.csv
+          git add outputs/adzuna_skill_demand.csv
+          git add outputs/adzuna_role_summary.csv
+          git add outputs/adzuna_region_summary.csv
+
+          git diff --cached --quiet || git commit -m "Update UK analytics job market data"
+          git push
