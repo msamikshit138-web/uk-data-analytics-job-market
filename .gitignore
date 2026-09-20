@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+
+# Raw live vacancy data should remain local
+data/raw/adzuna_*.csv
+data/processed/adzuna_full_local.csv
+
+# Generated temporary files
+*.tmp. 
