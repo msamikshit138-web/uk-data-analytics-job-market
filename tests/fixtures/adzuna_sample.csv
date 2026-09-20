@@ -1,0 +1,4 @@
+job_id,search_term,title,company,location,location_area,latitude,longitude,category,salary_min,salary_max,contract_type,contract_time,created,description,redirect_url,extracted_at
+1,data analyst,Junior Data Analyst,Example Ltd,London,"UK > London",51.5,-0.1,IT Jobs,30000,35000,permanent,full_time,2026-09-01T10:00:00Z,"SQL Excel Power BI Python",https://example.com/1,2026-09-02T10:00:00Z
+2,data analyst,Senior BI Analyst,Example Bank,Manchester,"UK > North West England",53.5,-2.2,IT Jobs,55000,65000,permanent,full_time,2026-09-01T10:00:00Z,"SQL Azure Power BI DAX",https://example.com/2,2026-09-02T10:00:00Z
+3,data scientist,Data Scientist,Example Tech,Bristol,"UK > South West England",51.4,-2.6,IT Jobs,50000,60000,permanent,full_time,2026-09-01T10:00:00Z,"Python machine learning SQL AWS",https://example.com/3,2026-09-02T10:00:00Z
